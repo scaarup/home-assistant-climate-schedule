@@ -1,0 +1,60 @@
+input_datetime:
+  heating_schedule_start_frederik:
+    has_date: false
+    has_time: true
+  heating_schedule_stop_frederik:
+    has_date: false
+    has_time: true
+  heating_schedule_start_1_sal:
+    has_date: false
+    has_time: true
+  heating_schedule_stop_1_sal:
+    has_date: false
+    has_time: true
+input_boolean:
+  heating_schedule_global:
+    icon: mdi:thermostat
+  heating_schedule_frederik:
+    icon: mdi:thermostat
+  heating_daytime_frederik:
+    icon: mdi:clock-outline
+  heating_schedule_1_sal:
+    icon: mdi:thermostat
+  heating_daytime_1_sal:
+    icon: mdi:clock-outline
+input_number:
+  heating_target_temp_plan_frederik:
+    unit_of_measurement: "°C"
+    icon: mdi:thermostat
+    step: 0.5
+    min: 6
+    max: 28
+  heating_target_temp_noplan_frederik:
+    unit_of_measurement: "°C"
+    icon: mdi:thermostat
+    step: 0.5
+    min: 6
+    max: 28
+  heating_target_temp_plan_1_sal:
+    unit_of_measurement: "°C"
+    icon: mdi:thermostat
+    step: 0.5
+    min: 6
+    max: 28
+  heating_target_temp_noplan_1_sal:
+    unit_of_measurement: "°C"
+    icon: mdi:thermostat
+    step: 0.5
+    min: 6
+    max: 28
+sensor:
+  - platform: template
+    sensors:
+      thermostat_1_sal_temperature:
+        value_template: "{{ state_attr('climate.thermostat_1sal', 'current_temperature') }}"
+        device_class: temperature
+        unit_of_measurement: '°C'
+      thermostat_frederik_temperature:
+        value_template: "{{ state_attr('climate.thermostat_frederik', 'current_temperature') }}"
+        device_class: temperature
+        unit_of_measurement: '°C'

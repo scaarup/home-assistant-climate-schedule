@@ -1,0 +1,71 @@
+- id: '1633071224884'
+  alias: Radiator schedule
+  description: ''
+  trigger:
+  - platform: time
+    at: input_datetime.heating_schedule_start_1_sal
+  - platform: time
+    at: input_datetime.heating_schedule_stop_1_sal
+  - platform: time
+    at: input_datetime.heating_schedule_start_frederik
+  - platform: time
+    at: input_datetime.heating_schedule_stop_frederik
+  condition:
+  - condition: state
+    entity_id: input_boolean.heating_schedule_global
+    state: 'on'
+  action:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{% if trigger.entity_id|regex_match(''.+schedule_start_1_sal'',
+          ignorecase=False) %} True  {% endif %}'
+      sequence:
+      - service: climate.set_temperature
+        data_template:
+          entity_id: '{% if trigger.entity_id|regex_match(''.+1_sal$'', ignorecase=False)
+            %} climate.thermostat_1sal  {% endif %}'
+          temperature: '{% if trigger.entity_id|regex_match(''.+1_sal$'', ignorecase=False)
+            %}  {{ states.input_number.heating_target_temp_plan_1_sal.state }} {%
+            endif %}'
+    default: []
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{% if trigger.entity_id == ''input_datetime.heating_schedule_start_frederik''
+          %} True {% endif %}'
+      sequence:
+      - service: climate.set_temperature
+        data_template:
+          entity_id: climate.thermostat_frederik
+          temperature: '{{ states.input_number.heating_target_temp_plan_frederik.state
+            }}'
+    default: []
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{% if trigger.entity_id == ''input_datetime.heating_schedule_stop_frederik''
+          %} True {% endif %}'
+      sequence:
+      - service: climate.set_temperature
+        data_template:
+          entity_id: climate.thermostat_frederik
+          temperature: '{{ states.input_number.heating_target_temp_noplan_frederik.state
+            }}'
+    default: []
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{% if trigger.entity_id|regex_match(''.+schedule_stop_1_sal'',
+          ignorecase=False) %} True  {% endif %}'
+      sequence:
+      - service: climate.set_temperature
+        data_template:
+          entity_id: '{% if trigger.entity_id|regex_match(''.+1_sal$'', ignorecase=False)
+            %} climate.thermostat_1sal  {% endif %}'
+          temperature: '{% if trigger.entity_id|regex_match(''.+1_sal$'', ignorecase=False)
+            %}  {{ states.input_number.heating_target_temp_noplan_1_sal.state }} {%
+            endif %}'
+    default: []
+  mode: parallel
+  max: 10
